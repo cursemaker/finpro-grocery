@@ -44,6 +44,8 @@ export default function AdminProductListViewPage() {
             alt={product.name}
           />
         );
+      case 'name':
+        return <Link href={`/p/${product.slug}`} className='text-blue-600 hover:underline hover:font-medium'>{product.name || '—'}</Link>;
       case 'brand':
         return product.productBrand?.name || '—';
       case 'category':
