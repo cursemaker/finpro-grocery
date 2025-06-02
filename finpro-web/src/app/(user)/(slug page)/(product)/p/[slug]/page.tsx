@@ -79,11 +79,11 @@ export default function ProductSlugPage() {
       <div className="hidden lg:flex lg:border lg:border-gray-100 items-center px-6 py-4 rounded-full w-full shadow-md my-2">
         {breadcrumbLinks.map((link, index) => (
           <React.Fragment key={index}>
-            <Link href={link.href} className="text-sm text-gray-600 hover:text-red-700">
+            <Link href={link.href} className="text-xs text-gray-500 hover:text-red-700">
               {link.label}
             </Link>
             {index !== breadcrumbLinks.length - 1 && (
-              <span className="mx-2 text-red-700">
+              <span className="mx-2 text-red-500">
                 <IoIosArrowDroprightCircle />
               </span>
             )}
