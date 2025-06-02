@@ -46,12 +46,12 @@ export default function ProductSlugPage() {
         <h1 className='p-2 text-xl text-black'>{product?.name}</h1>
         <div className='flex flex-col gap-2 mx-4 p-2 rounded-md shadow-md'>
           <div className='flex items-center gap-2'>
-            <IoStorefrontOutline />
+            <IoStorefrontOutline className='text-2xl' />
             <p>{`Brand :`}</p>
             <Link href={'#'}>{`BRAND >`}</Link>
           </div>
           <div className='flex items-center gap-2'>
-            <FaShippingFast />
+            <FaShippingFast className='text-2xl' />
             <p>Pengiriman Instan</p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function ProductSlugPage() {
       </div>
       <div className='flex flex-col'>
         <h1 className='font-semibold text-base my-3'>Pengiriman</h1>
-        <div className='flex flex-col gap-2 mx-4 p-2 rounded-md shadow-md'>
+        <div className='flex flex-col gap-2 mx-4 p-2 rounded-md shadow-md text-gray-600'>
           <div className='flex items-center gap-2'>
             <MdDeliveryDining className='text-2xl' />
             <p>{`Dikirim oleh `}</p>
