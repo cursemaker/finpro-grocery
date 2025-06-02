@@ -9,6 +9,7 @@ import { FaShippingFast } from 'react-icons/fa';
 import { IoStorefrontOutline } from 'react-icons/io5';
 import { MdDeliveryDining } from 'react-icons/md';
 import { RiMoneyDollarCircleFill } from 'react-icons/ri';
+import AppsInfoComponent from './components/AppsInformation';
 
 export default function ProductSlugPage() {
   const params = useParams();
@@ -102,6 +103,7 @@ export default function ProductSlugPage() {
           </div>
         </div>
       </div>
+      <AppsInfoComponent/>
     </div>
   );
 }
