@@ -18,7 +18,7 @@ export default function ProductSlugPage() {
   const params = useParams();
   const [product, setProduct] = React.useState<IProductDetails | null>(null);
   const [imageShowing, setImageShowing] = React.useState<IProductImage | null>(null);
-  const [quantity, setQuantity] = React.useState<number>(10);
+  const [quantity, setQuantity] = React.useState<number>(1);
   const testDescription = {
     list: [
       "Tabung gas mini isi ulang dari HI-COOK",
@@ -94,7 +94,13 @@ export default function ProductSlugPage() {
       <div className="lg:grid lg:grid-cols-[auto_1fr_auto] lg:w-full lg:my-10 lg:px-4 lg:[&>*]:px-2">
         {/* Product Images */}
         <div className="lg:flex lg:flex-col justify-center mx-auto h-fit">
-          <CldImage width={400} height={400} src={imageShowing?.imageUrl ?? ""} alt={product?.name ?? ""} />
+          {imageShowing?.imageUrl ? (
+            <CldImage width={400} height={400} src={imageShowing.imageUrl} alt={product?.name || "Product image"} />
+          ) : (
+            <div className="size-[400px] bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-400">No image available</span>
+            </div>
+          )}
           <div className="flex gap-2 justify-left items-center">
             {product?.productImage.map((image, index) => (
               <div
@@ -153,72 +159,78 @@ export default function ProductSlugPage() {
               </ul>
               <h3 className="font-semibold text-base">{testDescription.product}</h3>
               <p>{testDescription.short}</p>
-              <p>
+              <span>
                 <p className="font-semibold inline mr-2">{testDescription.product}</p>
                 {testDescription.long}
-              </p>
+              </span>
             </div>
           </div>
         </div>
         <div className="px-3">
-
-        <div className="lg:flex lg:flex-col lg:px-6 lg:py-6 lg:gap-2 lg:rounded-lg lg:bg-gray-50 lg:shadow-md lg:size-max">
-          {/* Product Add to Cart */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-normal text-gray-400 text-sm">Jumlah Pembelian</h3>
-              <div className="flex items-center gap-1">
-                <div
-                  className={`p-1 border border-gray-300 cursor-pointer rounded-lg active:ring-2 active:ring-gray-300 active:bg-gray-400 group ${
-                    quantity === 1 && "pointer-events-none bg-gray-300"
-                  }`}
-                  onClick={() => handleQuantityChange("minus")}
-                >
-                  <HiOutlineMinusSm
-                    className={`text-blue-700 hover:text-gray-500 group-active:text-gray-500 ${
-                      quantity === 1 && "text-gray-500"
+          <div className="lg:flex lg:flex-col lg:px-6 lg:py-6 lg:gap-2 lg:rounded-lg lg:bg-gray-50 lg:shadow-md lg:size-max">
+            {/* Product Add to Cart */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-normal text-gray-400 text-sm">Jumlah Pembelian</h3>
+                <div className="flex items-center gap-1">
+                  <div
+                    className={`p-1 border border-gray-300 cursor-pointer rounded-lg active:ring-2 active:ring-gray-300 active:bg-gray-400 group ${
+                      quantity === 1 && "pointer-events-none bg-gray-300"
                     }`}
-                  />
-                </div>
-                <div className="w-12 border-b border-gray-400">
-                  <input type="number" className="w-full text-center" value={quantity} />
-                </div>
-                <div
-                  className="p-1 border border-gray-300 cursor-pointer rounded-lg active:ring-2 active:ring-gray-300 active:bg-gray-400 group "
-                  onClick={() => handleQuantityChange("plus")}
-                >
-                  <HiOutlinePlusSm className="text-blue-700 hover:text-gray-600 group-active:text-gray-500" />
+                    onClick={() => handleQuantityChange("minus")}
+                  >
+                    <HiOutlineMinusSm
+                      className={`text-blue-700 hover:text-gray-500 group-active:text-gray-500 ${
+                        quantity === 1 && "text-gray-500"
+                      }`}
+                    />
+                  </div>
+                  <div className="w-12 border-b border-gray-400">
+                    <input type="number" className="w-full text-center outline-none" value={quantity}
+                      onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (!isNaN(value) && value >= 1) {
+                        setQuantity(value);
+                      }
+                      }}
+                      min={1}
+                    />
+                  </div>
+                  <div
+                    className="p-1 border border-gray-300 cursor-pointer rounded-lg active:ring-2 active:ring-gray-300 active:bg-gray-400 group "
+                    onClick={() => handleQuantityChange("plus")}
+                  >
+                    <HiOutlinePlusSm className="text-blue-700 hover:text-gray-600 group-active:text-gray-500" />
+                  </div>
                 </div>
               </div>
+              <div>
+                <button className="w-full text-white font-medium text-lg py-2 rounded-md flex items-center justify-center bg-red-700 cursor-pointer active:ring-4 active:ring-blue-300">
+                  {`+ Keranjang`}
+                </button>
+              </div>
             </div>
-            <div>
-              <button className="w-full text-white font-medium text-lg py-2 rounded-md flex items-center justify-center bg-red-700 cursor-pointer active:ring-4 active:ring-blue-300">
+            {/* Divider */}
+            <div className="my-2 border border-gray-200 w-full"></div>
 
-              {`+ Keranjang`}
-              </button>
+            {/* Product Delivery */}
+            <div className="flex flex-col">
+              <h1 className="font-semibold text-base mb-3">Pengiriman</h1>
+              <div className="flex flex-col gap-2 max-lg:mx-4 max-lg:p-2 max-lg:rounded-md max-lg:shadow-md lg:text-xs text-gray-600">
+                <div className="flex items-center gap-2">
+                  <MdDeliveryDining className="text-2xl" />
+                  <p>{`Dikirim oleh `}</p>
+                  <Link className="font-semibold" href={"#"}>{`SAPA Instant Delivery`}</Link>
+                </div>
+                <div className="flex items-center gap-2">
+                  <RiMoneyDollarCircleFill className="text-2xl" />
+                  <p>
+                    Biaya Pengiriman <b>Gratis</b>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-          {/* Divider */}
-          <div className="my-2 border border-gray-200 w-full"></div>
-
-          {/* Product Delivery */}
-          <div className="flex flex-col">
-            <h1 className="font-semibold text-base mb-3">Pengiriman</h1>
-            <div className="flex flex-col gap-2 max-lg:mx-4 max-lg:p-2 max-lg:rounded-md max-lg:shadow-md lg:text-xs text-gray-600">
-              <div className="flex items-center gap-2">
-                <MdDeliveryDining className="text-2xl" />
-                <p>{`Dikirim oleh `}</p>
-                <Link className="font-semibold" href={"#"}>{`SAPA Instant Delivery`}</Link>
-              </div>
-              <div className="flex items-center gap-2">
-                <RiMoneyDollarCircleFill className="text-2xl" />
-                <p>
-                  Biaya Pengiriman <b>Gratis</b>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
         </div>
       </div>
       {/* Apps Information */}
