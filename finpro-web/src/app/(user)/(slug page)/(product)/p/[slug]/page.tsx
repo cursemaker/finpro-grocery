@@ -1,109 +1,228 @@
-'use client';
-import apiInstance from '@/services/apiInstance';
-import { IProductDetails } from '@/types/products/product.type';
-import { CldImage } from 'next-cloudinary';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import * as React from 'react';
-import { FaShippingFast } from 'react-icons/fa';
-import { IoStorefrontOutline } from 'react-icons/io5';
-import { MdDeliveryDining } from 'react-icons/md';
-import { RiMoneyDollarCircleFill } from 'react-icons/ri';
-import AppsInfoComponent from './components/AppsInformation';
+"use client";
+import apiInstance from "@/services/apiInstance";
+import { ICloudinaryResult, IProductDetails } from "@/types/products/product.type";
+import { CldImage } from "next-cloudinary";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import * as React from "react";
+import { FaShippingFast } from "react-icons/fa";
+import { IoStorefrontOutline } from "react-icons/io5";
+import { MdDeliveryDining } from "react-icons/md";
+import { RiMoneyDollarCircleFill } from "react-icons/ri";
+import AppsInfoComponent from "./components/AppsInformation";
+import { IoIosArrowDroprightCircle } from "react-icons/io";
+import { IProductImage } from "@/types/products/product.image.type";
+import { HiOutlineMinusSm, HiOutlinePlusSm } from "react-icons/hi";
 
 export default function ProductSlugPage() {
   const params = useParams();
   const [product, setProduct] = React.useState<IProductDetails | null>(null);
+  const [imageShowing, setImageShowing] = React.useState<IProductImage | null>(null);
+  const [quantity, setQuantity] = React.useState<number>(10);
   const testDescription = {
     list: [
-      'Tabung gas mini isi ulang dari HI-COOK',
-      'Ramah lingkungan & tahan lama',
-      'Aman & mudah digunakan',
-      'Tersedia dalam kemasan kaleng isi 230 gr',
+      "Tabung gas mini isi ulang dari HI-COOK",
+      "Ramah lingkungan & tahan lama",
+      "Aman & mudah digunakan",
+      "Tersedia dalam kemasan kaleng isi 230 gr",
     ],
-    product: 'HI-COOK Tabung Gas Mini',
+    product: "HI-COOK Tabung Gas Mini",
     short:
-      'Kegiatan masak-memasak menjadi lancar sesuai harapan karena kompor selalu mendapat suplai gas yang mencukupi berkat HI-COOK Tabung Gas Mini',
-    long: 'merupakan tabung gas ukuran mini yang diciptakan khusus untuk memenuhi kebutuhan anda. Dapat untuk diaplikasikan pada kompor gas tipe mini atau alat-alat lainnya. Cocok untuk digunakan sebagai peralatan bekal memasak ketika aktivitas berkemah atau aktivitas di luar rumah lainnya. Mempunyai desain mini sehingga sangat praktis dibawa atau ditaruh dimanapun. HI-COOK Tabung Gas Mini sangat memenuhi kebutuhan anda.',
+      "Kegiatan masak-memasak menjadi lancar sesuai harapan karena kompor selalu mendapat suplai gas yang mencukupi berkat HI-COOK Tabung Gas Mini",
+    long: "merupakan tabung gas ukuran mini yang diciptakan khusus untuk memenuhi kebutuhan anda. Dapat untuk diaplikasikan pada kompor gas tipe mini atau alat-alat lainnya. Cocok untuk digunakan sebagai peralatan bekal memasak ketika aktivitas berkemah atau aktivitas di luar rumah lainnya. Mempunyai desain mini sehingga sangat praktis dibawa atau ditaruh dimanapun. HI-COOK Tabung Gas Mini sangat memenuhi kebutuhan anda.",
   };
+  const breadcrumbLinks = React.useMemo(() => {
+    return [
+      { label: "Home", href: "/" },
+      {
+        label: product?.productSubCategory.productCategory.name,
+        href: `/c/${product?.productSubCategory.productCategory.slug}`,
+      },
+      {
+        label: product?.productSubCategory.name,
+        href: `/c/${product?.productSubCategory.productCategory.slug}/${product?.productSubCategory.slug}`,
+      },
+      { label: product?.name, href: `#` },
+    ];
+  }, [product]);
+  const handleImageClick = (image: IProductImage) => {
+    setImageShowing(image);
+  };
+  const handleQuantityChange = (action: 'plus' | 'minus') => {
+    switch (action) {
+      case 'plus':
+        setQuantity(quantity + 1);
+        break;
+      case 'minus':
+        if (quantity > 1) {
+          setQuantity(quantity - 1);
+        }
+        break;
+    } 
+  }
   const handleGetProductDetails = async () => {
     try {
-      const response = await apiInstance.get('/product/' + params.slug);
+      const response = await apiInstance.get("/product/" + params.slug);
       console.log(response.data.product);
       setProduct(response.data.product);
+      setImageShowing(response.data.product.productImage[0]);
     } catch (error) {
-      console.error('Error fetching product details:', error);
+      console.error("Error fetching product details:", error);
     }
   };
   React.useEffect(() => {
     handleGetProductDetails();
   }, []);
   return (
-    <div className='px-2 py-4 bg-white text-black'>
-      <div className='flex justify-center mx-auto'>
-        <CldImage width={400} height={400} src={product?.productImage[0].imageUrl ?? ''} alt={product?.name ?? ''} />
+    <div className="px-2 py-4 bg-white text-gray-600 sm:max-w-[1200px] mx-auto">
+      {/* Breadcrumb */}
+      <div className="hidden lg:flex lg:border lg:border-gray-100 items-center px-6 py-4 rounded-full w-full shadow-md my-2">
+        {breadcrumbLinks.map((link, index) => (
+          <React.Fragment key={index}>
+            <Link href={link.href} className="text-sm text-gray-600 hover:text-red-700">
+              {link.label}
+            </Link>
+            {index !== breadcrumbLinks.length - 1 && (
+              <span className="mx-2 text-red-700">
+                <IoIosArrowDroprightCircle />
+              </span>
+            )}
+          </React.Fragment>
+        ))}
       </div>
-      <div className='flex flex-col'>
-        <h1 className='p-2 text-xl text-black'>{product?.name}</h1>
-        <div className='flex flex-col gap-2 mx-4 p-2 rounded-md shadow-md'>
-          <div className='flex items-center gap-2'>
-            <IoStorefrontOutline className='text-2xl' />
-            <p>{`Brand :`}</p>
-            <Link href={'#'}>{`BRAND >`}</Link>
-          </div>
-          <div className='flex items-center gap-2'>
-            <FaShippingFast className='text-2xl' />
-            <p>Pengiriman Instan</p>
-          </div>
-        </div>
-      </div>
-      <div className='px-3'>
-        <h1 className='text-2xl text-red-700 font-bold py-2'>
-          {product?.price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 })}
-        </h1>
-      </div>
-      <div className='px-3 flex items-center gap-2'>
-        <div className='px-2 py-1 size-max rounded-md bg-amber-600 font-medium text-sm text-white'>{`6 %`}</div>
-        <div className='text-xs text-gray-600 line-through'>
-          {Number(28200).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 })}
-        </div>
-      </div>
-      <div className='px-3 my-6 border border-gray-200 w-full'></div>
-      <div>
-        <h1 className='font-semibold text-base my-3'>Deskripsi</h1>
-        <div className='px-3 flex flex-col gap-2 text-gray-700 text-[15px]'>
-          <ul>
-            {testDescription.list.map((item, index) => (
-              <li key={index} className='list-disc list-inside'>
-                {item}
-              </li>
+
+      <div className="lg:grid lg:grid-cols-[auto_1fr_auto] lg:w-full lg:my-10 lg:px-4 lg:[&>*]:px-2">
+        {/* Product Images */}
+        <div className="lg:flex lg:flex-col justify-center mx-auto h-fit">
+          <CldImage width={400} height={400} src={imageShowing?.imageUrl ?? ""} alt={product?.name ?? ""} />
+          <div className="flex gap-2 justify-left items-center">
+            {product?.productImage.map((image, index) => (
+              <div
+                key={index}
+                onClick={() => handleImageClick(image)}
+                className={imageShowing?.id === image.id ? "border-2 border-red-700 rounded-md overflow-hidden" : ""}
+              >
+                <CldImage width={60} height={60} src={image.imageUrl} alt={product?.name ?? ""} />
+              </div>
             ))}
-          </ul>
-          <h3 className='font-semibold text-base'>{testDescription.product}</h3>
-          <p>{testDescription.short}</p>
-          <p>
-            <p className='font-semibold inline mr-2'>{testDescription.product}</p>
-            {testDescription.long}
-          </p>
-        </div>
-      </div>
-      <div className='flex flex-col'>
-        <h1 className='font-semibold text-base my-3'>Pengiriman</h1>
-        <div className='flex flex-col gap-2 mx-4 p-2 rounded-md shadow-md text-gray-600'>
-          <div className='flex items-center gap-2'>
-            <MdDeliveryDining className='text-2xl' />
-            <p>{`Dikirim oleh `}</p>
-            <Link className='font-semibold' href={'#'}>{`SAPA Instant Delivery`}</Link>
-          </div>
-          <div className='flex items-center gap-2'>
-            <RiMoneyDollarCircleFill className='text-2xl' />
-            <p>
-              Biaya Pengiriman <b>Gratis</b>
-            </p>
           </div>
         </div>
+        {/* Product Information */}
+        <div className="lg:flex lg:flex-col lg:gap-2 lg:max-w-[450px]">
+          {/* Product Details */}
+          <div className="flex flex-col">
+            <h1 className="p-2 text-xl lg:text-2xl lg:font-bold text-black">{product?.name}</h1>
+            <div className="flex flex-col gap-2 mx-4 p-2 rounded-md shadow-md">
+              <div className="flex items-center gap-2">
+                <IoStorefrontOutline className="text-2xl" />
+                <p>{`Brand :`}</p>
+                <Link href={"#"}>{`BRAND >`}</Link>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaShippingFast className="text-2xl" />
+                <p>Pengiriman Instan</p>
+              </div>
+            </div>
+          </div>
+          {/* Product Price */}
+          <div className="px-3">
+            <h1 className="text-2xl text-red-700 font-bold py-2">
+              {product?.price.toLocaleString("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 })}
+            </h1>
+          </div>
+          {/* Product Discount */}
+          <div className="px-3 flex items-center gap-2">
+            <div className="px-2 py-1 size-max rounded-md bg-amber-600 font-medium text-sm text-white">{`6 %`}</div>
+            <div className="text-xs text-gray-600 line-through">
+              {Number(28200).toLocaleString("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 })}
+            </div>
+          </div>
+          {/* Line Divider */}
+          <div className="px-3 my-6 border border-gray-200 w-full"></div>
+
+          {/* Product Description */}
+          <div>
+            <h1 className="font-semibold text-base my-3">Deskripsi</h1>
+            <div className="px-3 flex flex-col gap-2 text-gray-700 text-[15px]">
+              <ul>
+                {testDescription.list.map((item, index) => (
+                  <li key={index} className="list-disc list-inside">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <h3 className="font-semibold text-base">{testDescription.product}</h3>
+              <p>{testDescription.short}</p>
+              <p>
+                <p className="font-semibold inline mr-2">{testDescription.product}</p>
+                {testDescription.long}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="px-3">
+
+        <div className="lg:flex lg:flex-col lg:px-6 lg:py-6 lg:gap-2 lg:rounded-lg lg:bg-gray-50 lg:shadow-md lg:size-max">
+          {/* Product Add to Cart */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-normal text-gray-400 text-sm">Jumlah Pembelian</h3>
+              <div className="flex items-center gap-1">
+                <div
+                  className={`p-1 border border-gray-300 cursor-pointer rounded-lg active:ring-2 active:ring-gray-300 active:bg-gray-400 group ${
+                    quantity === 1 && "pointer-events-none bg-gray-300"
+                  }`}
+                  onClick={() => handleQuantityChange("minus")}
+                >
+                  <HiOutlineMinusSm
+                    className={`text-blue-700 hover:text-gray-500 group-active:text-gray-500 ${
+                      quantity === 1 && "text-gray-500"
+                    }`}
+                  />
+                </div>
+                <div className="w-12 border-b border-gray-400">
+                  <input type="number" className="w-full text-center" value={quantity} />
+                </div>
+                <div
+                  className="p-1 border border-gray-300 cursor-pointer rounded-lg active:ring-2 active:ring-gray-300 active:bg-gray-400 group "
+                  onClick={() => handleQuantityChange("plus")}
+                >
+                  <HiOutlinePlusSm className="text-blue-700 hover:text-gray-600 group-active:text-gray-500" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <button className="w-full text-white font-medium text-lg py-2 rounded-md flex items-center justify-center bg-red-700 cursor-pointer active:ring-4 active:ring-blue-300">
+
+              {`+ Keranjang`}
+              </button>
+            </div>
+          </div>
+          {/* Divider */}
+          <div className="my-2 border border-gray-200 w-full"></div>
+
+          {/* Product Delivery */}
+          <div className="flex flex-col">
+            <h1 className="font-semibold text-base mb-3">Pengiriman</h1>
+            <div className="flex flex-col gap-2 max-lg:mx-4 max-lg:p-2 max-lg:rounded-md max-lg:shadow-md lg:text-xs text-gray-600">
+              <div className="flex items-center gap-2">
+                <MdDeliveryDining className="text-2xl" />
+                <p>{`Dikirim oleh `}</p>
+                <Link className="font-semibold" href={"#"}>{`SAPA Instant Delivery`}</Link>
+              </div>
+              <div className="flex items-center gap-2">
+                <RiMoneyDollarCircleFill className="text-2xl" />
+                <p>
+                  Biaya Pengiriman <b>Gratis</b>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
-      <AppsInfoComponent/>
+      {/* Apps Information */}
+      <AppsInfoComponent />
     </div>
   );
 }
