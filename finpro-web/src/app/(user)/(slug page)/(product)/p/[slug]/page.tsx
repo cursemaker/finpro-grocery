@@ -74,7 +74,7 @@ export default function ProductSlugPage() {
     handleGetProductDetails();
   }, []);
   return (
-    <div className="px-2 py-4 bg-white text-gray-600 sm:max-w-[1200px] mx-auto">
+    <div className="lg:px-2 py-4 bg-white text-gray-600 max-w-[500px] lg:max-w-[1200px] mx-auto flex flex-col max-lg:overflow-x-hidden relative">
       {/* Breadcrumb */}
       <div className="hidden lg:flex lg:border lg:border-gray-100 items-center px-6 py-4 rounded-full w-full shadow-md my-2">
         {breadcrumbLinks.map((link, index) => (
@@ -93,7 +93,7 @@ export default function ProductSlugPage() {
 
       <div className="lg:grid lg:grid-cols-[auto_1fr_auto] lg:w-full lg:my-10 lg:px-4 lg:[&>*]:px-2">
         {/* Product Images */}
-        <div className="lg:flex lg:flex-col justify-center mx-auto h-fit">
+        <div className="flex lg:flex-col justify-center mx-auto h-fit">
           {imageShowing?.imageUrl ? (
             <CldImage width={400} height={400} src={imageShowing.imageUrl} alt={product?.name || "Product image"} />
           ) : (
@@ -101,7 +101,7 @@ export default function ProductSlugPage() {
               <span className="text-gray-400">No image available</span>
             </div>
           )}
-          <div className="flex gap-2 justify-left items-center">
+          <div className="hidden lg:flex gap-2 justify-left items-center">
             {product?.productImage.map((image, index) => (
               <div
                 key={index}
@@ -166,11 +166,11 @@ export default function ProductSlugPage() {
             </div>
           </div>
         </div>
-        <div className="px-3">
-          <div className="lg:flex lg:flex-col lg:px-6 lg:py-6 lg:gap-2 lg:rounded-lg lg:bg-gray-50 lg:shadow-md lg:size-max">
+        <div className="lg:px-3">
+          <div className="lg:flex lg:flex-col lg:px-6 lg:py-6 lg:gap-2 lg:rounded-lg lg:bg-gray-50 lg:shadow-md lg:size-max w-full">
             {/* Product Add to Cart */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
+            <div className="flex max-lg:justify-between max-lg:items-center gap-4 lg:flex-col max-lg:fixed max-lg:bottom-0 max-lg:px-4 max-lg:py-2 max-lg:w-[500px] max-lg:shadow-[0_-.1rem_1rem_rgba(0,0,0,.15)] max-lg:bg-white">
+              <div className="flex max-lg:flex-col max-lg:gap-2 items-center justify-between">
                 <h3 className="font-normal text-gray-400 text-sm">Jumlah Pembelian</h3>
                 <div className="flex items-center gap-1">
                   <div
@@ -186,12 +186,15 @@ export default function ProductSlugPage() {
                     />
                   </div>
                   <div className="w-12 border-b border-gray-400">
-                    <input type="number" className="w-full text-center outline-none" value={quantity}
+                    <input
+                      type="number"
+                      className="w-full text-center outline-none"
+                      value={quantity}
                       onChange={(e) => {
-                      const value = parseInt(e.target.value);
-                      if (!isNaN(value) && value >= 1) {
-                        setQuantity(value);
-                      }
+                        const value = parseInt(e.target.value);
+                        if (!isNaN(value) && value >= 1) {
+                          setQuantity(value);
+                        }
                       }}
                       min={1}
                     />
@@ -204,26 +207,26 @@ export default function ProductSlugPage() {
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="flex-1">
                 <button className="w-full text-white font-medium text-lg py-2 rounded-md flex items-center justify-center bg-red-700 cursor-pointer active:ring-4 active:ring-blue-300">
                   {`+ Keranjang`}
                 </button>
               </div>
             </div>
             {/* Divider */}
-            <div className="my-2 border border-gray-200 w-full"></div>
+            <div className="my-2 border-b border-gray-200 w-full"></div>
 
             {/* Product Delivery */}
             <div className="flex flex-col">
               <h1 className="font-semibold text-base mb-3">Pengiriman</h1>
               <div className="flex flex-col gap-2 max-lg:mx-4 max-lg:p-2 max-lg:rounded-md max-lg:shadow-md lg:text-xs text-gray-600">
                 <div className="flex items-center gap-2">
-                  <MdDeliveryDining className="text-2xl" />
+                  <MdDeliveryDining className="text-2xl text-gray-400" />
                   <p>{`Dikirim oleh `}</p>
                   <Link className="font-semibold" href={"#"}>{`SAPA Instant Delivery`}</Link>
                 </div>
                 <div className="flex items-center gap-2">
-                  <RiMoneyDollarCircleFill className="text-2xl" />
+                  <RiMoneyDollarCircleFill className="text-2xl text-gray-400" />
                   <p>
                     Biaya Pengiriman <b>Gratis</b>
                   </p>
