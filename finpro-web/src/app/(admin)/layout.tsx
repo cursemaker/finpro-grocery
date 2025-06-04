@@ -52,7 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         </div>
       </div>
-      <div className="px-4 bg-amber-300">{children}</div>
+      <div className="px-4">{children}</div>
       <div className="lg:hidden w-full h-20 bg-red-700 fixed bottom-0 left-0 z-20 flex items-center justify-between">
         {bottomNav.map((item, index) => (
           <div
