@@ -25,18 +25,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
   const pathName = usePathname();
   return (
-    <div className="relative lg:grid lg:grid-cols-[1fr_1fr] overflow-x-hidden h-screen bg-white max-lg:pb-20">
-      <div className="hidden lg:flex lg:flex-col lg:w-[280px] w-full bg-red-700 text-white">
-        <div className="uppercase text-white font-bold text-2xl p-4">admin dashboard</div>
+    <div className="relative lg:grid lg:grid-cols-[280px_1fr] overflow-x-hidden h-screen bg-white max-lg:pb-20">
+      <div className="hidden px-4 lg:flex lg:flex-col bg-red-700 text-white">
+        <div className="uppercase text-white font-bold text-2xl py-4">admin dashboard</div>
         <div>
-          <div className="p-4 text-xl font-medium">Main Menu</div>
+          <div className="text-xl font-medium">Main Menu</div>
           <div>
             {sideNav.map((item, index) => (
               <Link
                 key={index}
                 href={item.href}
                 className={
-                  "flex items-center gap-2 px-6 py-3 text-white hover:bg-red-500 " +
+                  "flex items-center gap-2 px-4 py-3 text-white hover:bg-red-500 " +
                   (pathName.includes(item.href) || pathName === item.href
                     ? "bg-red-300 !text-red-600 font-semibold"
                     : "")
@@ -52,7 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         </div>
       </div>
-      <div className="w-full bg-amber-300">{children}</div>
+      <div className="px-4 bg-amber-300">{children}</div>
       <div className="lg:hidden w-full h-20 bg-red-700 fixed bottom-0 left-0 z-20 flex items-center justify-between">
         {bottomNav.map((item, index) => (
           <div
