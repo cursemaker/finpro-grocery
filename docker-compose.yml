@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     build: ./finpro-api
@@ -7,9 +5,12 @@ services:
       - "8001:8000"
     environment:
       - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./finpro-api:/app
       - /app/node_modules
+      - ./finpro-api/.env.development:/app/.env.development
     restart: unless-stopped
 
   web:
@@ -18,6 +19,9 @@ services:
       - "3001:3000"
     environment:
       - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - FAST_REFRESH=true
     volumes:
       - ./finpro-web:/app
       - /app/node_modules
