@@ -16,3 +16,11 @@ build/
 # IDE files
 .vscode/
 .idea/
+
+# amazon-q-chats
+amazon-q-chats/
+
+#git scripts
+**/*.sh
+git-commands-scripts
+**/*.bashrc
