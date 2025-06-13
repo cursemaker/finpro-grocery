@@ -1,13 +1,10 @@
 "use client";
 import AdminBottonNavBar from "@/features/admin/components/AdminBottomNavBar";
 import AdminSideNavBar from "@/features/admin/components/AdminSideNavBar";
-import { useAdminDashboardNavItems } from "@/features/admin/hooks/useAdminDashboardNavItems";
-import Link from "next/link";
 import * as React from "react";
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const {bottomNav,sideNav,pathName } = useAdminDashboardNavItems()
   return (
     <div className="relative lg:grid lg:grid-cols-[280px_1fr] overflow-x-hidden h-screen bg-white max-lg:pb-20">
       <AdminSideNavBar/>
