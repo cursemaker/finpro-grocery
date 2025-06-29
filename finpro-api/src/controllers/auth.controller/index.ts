@@ -45,7 +45,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
     // referral
     let referralCode = generateCodeTenChars();
-    while (await prisma.user.findFirst({ where: { referralCode } })) {
+    while (await prisma.user.findUnique({ where: { referralCode } })) {
       referralCode = generateCodeTenChars();
     }
 
