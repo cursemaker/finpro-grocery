@@ -6,9 +6,11 @@ import { errorValidatorHandler } from "../middlewares/express.validator/error.ha
 import { jwtDecode } from "../middlewares/jwt.decode";
 import * as adminController from "../controllers/admin.controller/admin.controller";
 
+
 const adminRouter = express.Router();
 
 adminRouter.post("/register-admin", jwtDecode, requireSuperAdmin, registerAdminValidator, errorValidatorHandler, registerAdmin);
+// adminRouter.post("/register-admin", registerAdmin);
 adminRouter.post("/login", loginAdmin);
 adminRouter.get("/session-login", jwtDecode, sessionLoginAdmin);
 adminRouter.get('/', adminController.getAllAdmins)
