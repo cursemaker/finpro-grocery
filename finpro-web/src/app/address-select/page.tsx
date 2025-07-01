@@ -28,7 +28,7 @@ export default function SelectAddressPage() {
     } catch (err: any) {
       if (err.response?.status === 404) {
         toast.info("Kamu belum punya alamat. Silakan isi terlebih dahulu.");
-        router.push("/address-form"); // atau "/registrasi" sesuai kebutuhanmu
+        router.push("/register"); 
       } else {
         toast.error("Gagal mengambil alamat Anda");
       }
