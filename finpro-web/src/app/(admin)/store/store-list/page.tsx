@@ -34,7 +34,6 @@ export default function StoreListPage() {
             Authorization: `Bearer ${token}`,
           },
         });
-
         setStores(res.data);
       } catch (error) {
         console.error("Gagal mengambil data store:", error);
@@ -63,7 +62,8 @@ export default function StoreListPage() {
             <div key={store.id} className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
               <h2 className="text-lg font-semibold">{store.name}</h2>
               <p className="text-sm text-gray-600">
-                {store.address}, {store.city}, {store.province}
+                {store.address && `${store.address}, `}
+                {store.city}, {store.province}
               </p>
               <Link href={`/store/${store.id}`} className="text-blue-600 text-sm mt-2 inline-block">
                 Lihat Detail

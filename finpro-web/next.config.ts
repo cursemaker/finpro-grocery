@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  
 }
 
 export default withFlowbiteReact(nextConfig);

@@ -1,9 +1,7 @@
+// src/routes/shipping.route.ts
 import { Router } from "express";
-import { getCityIdByName, getShippingCost } from "../controllers/shipping.controller";
+import { getShippingCost } from "../controllers/shipping.controller";
 
-const shippingRouter = Router();
-
-shippingRouter.post("/shipping-cost", getShippingCost);
-shippingRouter.get("/city-id", getCityIdByName);
-
-export default shippingRouter;
+const router = Router();
+router.post("/cost", getShippingCost);
+export default router;
