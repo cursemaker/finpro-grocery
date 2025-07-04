@@ -29,9 +29,9 @@ export default function useCart() {
     //         ? product.discount.discountedPrice
     //         : product.price
     //       : product.productDiscountHistories.length > 0
-    //       ? product.productDiscountHistories[0].discountValue > 100
-    //         ? product.price - product.productDiscountHistories[0].discountValue
-    //         : product.price * (1 - product.productDiscountHistories[0].discountValue / 100)
+    //       ? product.productDiscountHistories[0]?.discountValue > 100
+    //         ? product.price - product.productDiscountHistories[0]?.discountValue
+    //         : product.price * (1 - product.productDiscountHistories[0]?.discountValue / 100)
     //       : product.price,
     //   quantity: quantity,
     //   image: product.productImage?.[0]?.imageUrl ?? "",

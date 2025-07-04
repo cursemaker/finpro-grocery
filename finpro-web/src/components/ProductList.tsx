@@ -154,7 +154,7 @@ export default function DaftarProduk() {
                 <div className="p-2">
                   <div className="h-5 flex items-center">
                     {produk.productDiscountHistories?.length > 0 &&
-                      (produk.productDiscountHistories[0].discountType === EDiscountType.BUY1_GET1 ? (
+                      (produk.productDiscountHistories[0]?.discountType === EDiscountType.BUY1_GET1 ? (
                         <span className="text-white bg-lime-500 py-0.5 px-1 rounded-sm font-bold text-[10px] h-max">
                           Beli 1 Gratis 1
                         </span>
@@ -171,10 +171,10 @@ export default function DaftarProduk() {
                   <div>
                     <span className="font-bold text-base text-red-600">
                       {produk.productDiscountHistories?.length > 0 &&
-                      produk.productDiscountHistories[0].discountType !== EDiscountType.BUY1_GET1
-                        ? (produk.productDiscountHistories[0].discountType === EDiscountType.FIXED_AMOUNT
-                            ? produk.price - produk.productDiscountHistories[0].discountValue
-                            : produk.price * (1 - produk.productDiscountHistories[0].discountValue / 100)
+                      produk.productDiscountHistories[0]?.discountType !== EDiscountType.BUY1_GET1
+                        ? (produk.productDiscountHistories[0]?.discountType === EDiscountType.FIXED_AMOUNT
+                            ? produk.price - produk.productDiscountHistories[0]?.discountValue
+                            : produk.price * (1 - produk.productDiscountHistories[0]?.discountValue / 100)
                           ).toLocaleString("id-ID", {
                             style: "currency",
                             currency: "IDR",
@@ -198,17 +198,13 @@ export default function DaftarProduk() {
                     <span className="font-bold text-red-600">Pengiriman Instan</span>
                   </div>
                 </div>
-              </Link>
 
-              {/* <div className="p-2 border-t border-gray-300 cursor-pointer">
-                <button
-                  type="button"
-                  onClick={() => handleAddToCart(1, produk?.id, storeId!, produk)}
-                  className="py-2 w-full bg-red-600 rounded-md font-medium text-white hover:bg-red-700 cursor-pointer"
-                >
-                  Beli
-                </button>
-              </div> */}
+                <div>
+                  <p className="text-xs text-gray-600 font-medium mb-1">{produk.productSubCategory?.name || "Umum"}</p>
+                  <h3 className="font-medium text-gray-800 text-sm sm:text-base mb-1 truncate">{produk.name}</h3>
+                  <p className="font-bold text-red-600">Rp{produk.price.toLocaleString("id-ID")}</p>
+                </div>
+              </Link>
             </div>
           </div>
         ))}

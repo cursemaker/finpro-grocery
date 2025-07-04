@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
+import { FaShoppingCart, FaSearch, FaBars, FaTimes } from "react-icons/fa";
 import SelectCategory from "./SelectCategory";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBarDropdownProducts from "./filters/SearchBarDropdownProducts";
@@ -26,7 +26,6 @@ export default function Navbar() {
                 width={120}
                 height={40}
                 className="h-8 w-auto"
-                unoptimized
               />
             </Link>
           </div>

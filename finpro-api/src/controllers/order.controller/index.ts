@@ -115,28 +115,31 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
     const baseTotalAmount = totalAmount; // e.g. sum of cart items
     let discountedTotalAmount = 0; // Example product discount
 
-    const voucherApplied = await prisma.voucher.findUnique({
-      where: {
-        id: voucherId,
-      },
-    });
-    if (voucherId && !voucherApplied) {
-      throw new AppError("Voucher not found", 400);
-    }
-
     let voucherAmountOff = 0;
     let voucherShippingOff = 0;
-    if (voucherApplied) {
-      if (voucherApplied?.voucherType === $Enums.VoucherType.PRICE_CUT) {
-        if (voucherApplied?.discountValueType === $Enums.DiscountValueType.PERCENTAGE) {
-          voucherAmountOff = ((voucherApplied?.discountValue ?? 0) / 100) * baseTotalAmount;
-        } else {
-          voucherAmountOff = voucherApplied?.discountValue ?? 0;
+    let voucherApplied = false;
+    if (voucherId) {
+      const appliedVoucher = await prisma.voucher.findUnique({
+        where: {
+          id: voucherId,
+        },
+      });
+
+      if (appliedVoucher) {
+        if (appliedVoucher?.voucherType === $Enums.VoucherType.PRICE_CUT) {
+          if (appliedVoucher?.discountValueType === $Enums.DiscountValueType.PERCENTAGE) {
+            voucherAmountOff = ((appliedVoucher?.discountValue ?? 0) / 100) * baseTotalAmount;
+          } else {
+            voucherAmountOff = appliedVoucher?.discountValue ?? 0;
+          }
+        } else if (appliedVoucher?.voucherType === $Enums.VoucherType.REFERRAL) {
+          voucherAmountOff = ((appliedVoucher?.discountValue ?? 0) / 100) * baseTotalAmount;
+        } else if (appliedVoucher?.voucherType === $Enums.VoucherType.FREE_SHIPPING) {
+          voucherShippingOff = appliedVoucher?.discountValue ?? 0;
         }
-      } else if (voucherApplied?.voucherType === $Enums.VoucherType.REFERRAL) {
-        voucherAmountOff = ((voucherApplied?.discountValue ?? 0) / 100) * baseTotalAmount;
-      } else if (voucherApplied?.voucherType === $Enums.VoucherType.FREE_SHIPPING) {
-        voucherShippingOff = voucherApplied?.discountValue ?? 0;
+        voucherApplied = true;
+      } else {
+        throw new AppError("Voucher not found", 400);
       }
     }
 
@@ -175,7 +178,7 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       }
     }
     // Transaction: create order, soft-delete cart items, update stock
-    const order = await prisma.$transaction(async (tx) => {
+    const createdOrderResult = await prisma.$transaction(async (tx) => {
       const createdOrder = await tx.order.create({
         data: {
           userId,
@@ -262,21 +265,19 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
         }
 
         return {
-          order: createdOrder,
+          ...createdOrder,
           ...(voucherUsage && { voucherUsage }),
           ...(newVouchers && { newVouchers }),
         };
       }
 
-      return {
-        order: createdOrder,
-      };
+      return createdOrder;
     });
 
     res.status(201).json({
       success: true,
       message: "Order successfully created.",
-      order,
+      order: createdOrderResult,
     });
   } catch (error) {
     console.error("Checkout error:", error);
