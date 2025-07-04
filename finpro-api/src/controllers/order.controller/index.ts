@@ -1,4 +1,3 @@
-
 import { prisma } from "../../prisma";
 import { AppError } from "../../utils/app.error";
 import { Request, Response, NextFunction } from "express";
@@ -110,7 +109,7 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       };
     });
 
-        // Example placeholder: replace with your logic
+    // Example placeholder: replace with your logic
     const shippingCost = 0; // Example flat shipping fee in IDR
     const discountedShippingCost = 0; // Example shipping promo
     const baseTotalAmount = totalAmount; // e.g. sum of cart items
@@ -125,29 +124,29 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       throw new AppError("Voucher not found", 400);
     }
 
-    let voucherAmountOff = 0
-    let voucherShippingOff = 0
+    let voucherAmountOff = 0;
+    let voucherShippingOff = 0;
     if (voucherApplied) {
-      if(voucherApplied?.voucherType === $Enums.VoucherType.PRICE_CUT) {
-        if(voucherApplied?.discountValueType === $Enums.DiscountValueType.PERCENTAGE) {
-          voucherAmountOff = ((voucherApplied?.discountValue??0)/100)*baseTotalAmount
+      if (voucherApplied?.voucherType === $Enums.VoucherType.PRICE_CUT) {
+        if (voucherApplied?.discountValueType === $Enums.DiscountValueType.PERCENTAGE) {
+          voucherAmountOff = ((voucherApplied?.discountValue ?? 0) / 100) * baseTotalAmount;
         } else {
-          voucherAmountOff = voucherApplied?.discountValue??0
+          voucherAmountOff = voucherApplied?.discountValue ?? 0;
         }
       } else if (voucherApplied?.voucherType === $Enums.VoucherType.REFERRAL) {
-        voucherAmountOff = ((voucherApplied?.discountValue??0)/100)*baseTotalAmount
+        voucherAmountOff = ((voucherApplied?.discountValue ?? 0) / 100) * baseTotalAmount;
       } else if (voucherApplied?.voucherType === $Enums.VoucherType.FREE_SHIPPING) {
-        voucherShippingOff = voucherApplied?.discountValue??0
+        voucherShippingOff = voucherApplied?.discountValue ?? 0;
       }
     }
-    
-    
+
     // Calculate final shipping cost (never negative)
     const finalShippingCost = Math.max(shippingCost - discountedShippingCost - voucherShippingOff, 0);
-    
+
     // Calculate final amount: (products - discounts) + shipping
-    const finalTotalAmount = Math.max(baseTotalAmount - discountedTotalAmount - voucherAmountOff, 0) + finalShippingCost;
-    
+    const finalTotalAmount =
+      Math.max(baseTotalAmount - discountedTotalAmount - voucherAmountOff, 0) + finalShippingCost;
+
     const activeMinPurchaseDiscount = await prisma.productDiscount.findFirst({
       where: {
         discountType: $Enums.DiscountType.MIN_PURCHASE,
@@ -168,11 +167,11 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       },
     });
 
-    let nextShippingCostOffVouchers = 0
-    if(activeMinPurchaseDiscount) {
-      const minPurchaseValue = activeMinPurchaseDiscount.minPurchaseValue??0;
+    let nextShippingCostOffVouchers = 0;
+    if (activeMinPurchaseDiscount) {
+      const minPurchaseValue = activeMinPurchaseDiscount.minPurchaseValue ?? 0;
       if (baseTotalAmount >= minPurchaseValue) {
-        nextShippingCostOffVouchers = Math.floor((baseTotalAmount - (minPurchaseValue))/minPurchaseValue)
+        nextShippingCostOffVouchers = Math.floor((baseTotalAmount - minPurchaseValue) / minPurchaseValue);
       }
     }
     // Transaction: create order, soft-delete cart items, update stock
@@ -217,7 +216,7 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
           where: {
             productId_storeId: {
               productId: item.product.id,
-              storeId
+              storeId,
             },
           },
           data: {
@@ -235,41 +234,44 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
               voucherId,
               orderId: createdOrder.id,
               userId,
-              discountedAmount: voucherAmountOff
-            }
-          })
+              discountedAmount: voucherAmountOff,
+            },
+          });
         }
 
         if (activeMinPurchaseDiscount) {
           newVouchers = await Promise.all(
-            Array(nextShippingCostOffVouchers).fill(0).map(async () => {
-              return await tx.voucher.create({
-                data: {
-                  generatorOrderId: createdOrder.id,
-                  name: `Gratis Ongkir Max. Rp 15.000`,
-                  description: `Transaksi Order-${createdOrder.id} mendapatkan gratis ongkir max. Rp 15.000`,
-                  discountId: activeMinPurchaseDiscount.id,
-                  voucherType: $Enums.VoucherType.FREE_SHIPPING,
-                  discountValueType: $Enums.DiscountValueType.FIXED_AMOUNT,
-                  discountValue: 15000,
-                  userId,
-                  expiredDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-                }
-              })
-            })
-          )
+            Array(nextShippingCostOffVouchers)
+              .fill(0)
+              .map(async () => {
+                return await tx.voucher.create({
+                  data: {
+                    generatorOrderId: createdOrder.id,
+                    name: `Gratis Ongkir Max. Rp 15.000`,
+                    description: `Transaksi Order-${createdOrder.id} mendapatkan gratis ongkir max. Rp 15.000`,
+                    discountId: activeMinPurchaseDiscount.id,
+                    voucherType: $Enums.VoucherType.FREE_SHIPPING,
+                    discountValueType: $Enums.DiscountValueType.FIXED_AMOUNT,
+                    discountValue: 15000,
+                    userId,
+                    expiredDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+                  },
+                });
+              }),
+          );
         }
 
         return {
           order: createdOrder,
           ...(voucherUsage && { voucherUsage }),
-          ...(newVouchers && { newVouchers })
-        }
+          ...(newVouchers && { newVouchers }),
+        };
       }
 
       return {
-        order: createdOrder
-      }    });
+        order: createdOrder,
+      };
+    });
 
     res.status(201).json({
       success: true,

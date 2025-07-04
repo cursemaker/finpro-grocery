@@ -1,104 +1,110 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { CldImage } from 'next-cloudinary'
-import { IoStorefront } from 'react-icons/io5'
-import { RiTimerFlashFill } from 'react-icons/ri'
-import apiInstance from '@/utils/api/apiInstance'
-import { EDiscountType } from '@/types/discounts/discount.type'
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { CldImage } from "next-cloudinary";
+import { IoStorefront } from "react-icons/io5";
+import { RiTimerFlashFill } from "react-icons/ri";
+import apiInstance from "@/utils/api/apiInstance";
+import { EDiscountType } from "@/types/discounts/discount.type";
+import useCart from "@/features/(user)/p/hooks/useCart";
+import { useCategory } from "@/features/(user)/c/hooks/useCategory";
+import { IProductDetailsCategoryResponse } from "@/types/products/product.category.type";
+import { IProductDetails } from "@/types/products/product.type";
+import { IProductStock } from "@/types/inventories/product.stock.type";
 
-interface Produk {
-  barcode?: string
-  bpomId?: number
-  brandId?: number
-  createdAt: string
-  deletedAt?: string
-  description: string
-  dimensions: string
-  id: string
-  name: string
-  plu?: string
-  price: number
-  productBrand?: null
-  productImage: GambarProduk[]
-  productSubCategory: SubKategoriProduk
-  productSubCategoryId: number
-  productDiscountHistories: ProductDiscountHistory[]
-  sku: string
-  slug: string
-  updatedAt: string
-  weight: number
+export interface Produk {
+  barcode?: string;
+  bpomId?: number;
+  brandId?: number;
+  createdAt: string;
+  deletedAt?: string;
+  description: string;
+  dimensions: string;
+  id: string;
+  name: string;
+  plu?: string;
+  price: number;
+  productBrand?: null;
+  productImage: GambarProduk[];
+  productSubCategory: SubKategoriProduk;
+  productSubCategoryId: number;
+  productDiscountHistories: ProductDiscountHistory[];
+  productStock: IProductStock[];
+  sku: string;
+  slug: string;
+  updatedAt: string;
+  weight: number;
 }
 
 interface ProductDiscountHistory {
-  discountValue: number
-  discountType: EDiscountType
+  discountValue: number;
+  discountType: EDiscountType;
 }
 
 interface GambarProduk {
-  cldPublicId: string
-  createdAt: string
-  deletedAt: string
-  id: string
-  imageUrl: string
-  isMainImage: boolean
-  productId: string
-  updatedAt: string
+  cldPublicId: string;
+  createdAt: string;
+  deletedAt: string;
+  id: string;
+  imageUrl: string;
+  isMainImage: boolean;
+  productId: string;
+  updatedAt: string;
 }
 
 interface SubKategoriProduk {
-  createdAt: string
-  deletedAt?: string
-  description?: string
-  id: number
-  name: string
-  productCategory: KategoriProduk
-  productCategoryId: number
-  slug: string
-  updatedAt: string
+  createdAt: string;
+  deletedAt?: string;
+  description?: string;
+  id: number;
+  name: string;
+  productCategory: KategoriProduk;
+  productCategoryId: number;
+  slug: string;
+  updatedAt: string;
 }
 
 interface KategoriProduk {
-  createdAt: string
-  deletedAt?: string
-  description?: string
-  id: number
-  name: string
-  slug: string
-  updatedAt: string
+  createdAt: string;
+  deletedAt?: string;
+  description?: string;
+  id: number;
+  name: string;
+  slug: string;
+  updatedAt: string;
 }
 
 export default function DaftarProduk() {
-  const [produk, setProduk] = useState<Produk[]>([])
-  const [sedangMemuat, setSedangMemuat] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [produk, setProduk] = useState<Produk[]>([]);
+  const [sedangMemuat, setSedangMemuat] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const ambilProduk = async () => {
     try {
-      const response = await apiInstance.get('/product/all')
+      const response = await apiInstance.get("/product/all");
 
       if (response.data.success) {
-        setProduk(response.data.products)
-        setSedangMemuat(false)
+        setProduk(response.data.products);
+        setSedangMemuat(false);
       }
     } catch (err) {
-      console.error('Gagal mengambil produk:', err)
-      setError('Gagal memuat produk. Silakan coba lagi nanti.')
-      setSedangMemuat(false)
+      console.error("Gagal mengambil produk:", err);
+      setError("Gagal memuat produk. Silakan coba lagi nanti.");
+      setSedangMemuat(false);
     }
-  }
+  };
 
   useEffect(() => {
-    ambilProduk()
-  }, [])
+    ambilProduk();
+  }, []);
 
   if (sedangMemuat) {
     return (
       <div className="flex justify-center items-center h-40">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -112,8 +118,12 @@ export default function DaftarProduk() {
           Coba Lagi
         </button>
       </div>
-    )
+    );
   }
+
+  const { handleAddToCart } = useCart();
+  const { category, breadcrumbLinks, products, storeId, totalProducts, currentPage, totalPages, handlePageChange } =
+    useCategory();
 
   return (
     <div className="mt-12">
@@ -123,18 +133,21 @@ export default function DaftarProduk() {
           Lihat Semua
         </Link>
       </div>
-      
+
       <div className="md:flex md:flex-wrap w-full grid grid-cols-2 gap-2">
         {produk.map((produk) => (
-          <div key={produk.id} className="sm:max-w-[16.667%] sm:min-w-[160px] lg:max-w-[190px] md:max-h-[400px] md:px-[15px]">
+          <div
+            key={produk.id}
+            className="sm:max-w-[16.667%] sm:min-w-[160px] lg:max-w-[190px] md:max-h-[400px] md:px-[15px]"
+          >
             <div className="block rounded-md shadow-md mb-6">
               <Link href={`/p/${produk.slug}`} className="flex flex-col">
                 <div className="overflow-hidden centered">
-                  <CldImage 
-                    src={produk.productImage[0]?.imageUrl || '/placeholder-produk.png'} 
-                    width={144} 
-                    height={144} 
-                    alt={produk.name} 
+                  <CldImage
+                    src={produk.productImage[0]?.imageUrl || "/placeholder-produk.png"}
+                    width={144}
+                    height={144}
+                    alt={produk.name}
                   />
                 </div>
                 <div className="px-2 text-sm h-[45px] overflow-hidden text-ellipsis">{produk.name}</div>
@@ -186,10 +199,20 @@ export default function DaftarProduk() {
                   </div>
                 </div>
               </Link>
+
+              {/* <div className="p-2 border-t border-gray-300 cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => handleAddToCart(1, produk?.id, storeId!, produk)}
+                  className="py-2 w-full bg-red-600 rounded-md font-medium text-white hover:bg-red-700 cursor-pointer"
+                >
+                  Beli
+                </button>
+              </div> */}
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }

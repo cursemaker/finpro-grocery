@@ -7,9 +7,11 @@ import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import SelectCategory from "./SelectCategory";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBarDropdownProducts from "./filters/SearchBarDropdownProducts";
+import useCart from "@/features/(user)/p/hooks/useCart";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cart } = useCart();
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -18,14 +20,21 @@ export default function Navbar() {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmWWSU4u5wGIVkwL2LxKb6c_p0X8BAued88g&s" alt="Grocery Logo" width={120} height={40} className="h-8 w-auto" unoptimized />
+              <Image
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmWWSU4u5wGIVkwL2LxKb6c_p0X8BAued88g&s"
+                alt="Grocery Logo"
+                width={120}
+                height={40}
+                className="h-8 w-auto"
+                unoptimized
+              />
             </Link>
           </div>
 
           {/* Search bar - hidden on mobile */}
           <div className="hidden md:flex items-center flex-1 mx-8">
             <Suspense fallback={<div className="w-full h-10 bg-gray-100 rounded-lg animate-pulse" />}>
-              <SearchBarDropdownProducts onProductSelect={(product) => console.log('Selected:', product)} />
+              <SearchBarDropdownProducts onProductSelect={(product) => console.log("Selected:", product)} />
             </Suspense>
           </div>
 
@@ -38,7 +47,7 @@ export default function Navbar() {
             <Link href="/cart" className="relative text-gray-700 hover:text-red-600">
               <FaShoppingCart className="text-xl" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                0
+                {cart.length}
               </span>
             </Link>
             <div className="text-gray-700 hover:text-red-600">
@@ -64,7 +73,7 @@ export default function Navbar() {
           <div className="px-4 pt-2 pb-3 space-y-1">
             <div className="mb-3">
               <Suspense fallback={<div className="w-full h-10 bg-gray-100 rounded-lg animate-pulse" />}>
-                <SearchBarDropdownProducts onProductSelect={(product) => console.log('Selected:', product)} />
+                <SearchBarDropdownProducts onProductSelect={(product) => console.log("Selected:", product)} />
               </Suspense>
             </div>
             <div></div>
